@@ -7,10 +7,8 @@ using static UnityEngine.GraphicsBuffer;
 public class Target : MonoBehaviour
 {
     public GameManager game;
-    float lastSec = 1;
+    float timeLoad;
     AudioSource pointSound;
-    bool started = false;
-    public float timeLoad;
 
     // Start is called before the first frame update
     void Start()
@@ -21,36 +19,22 @@ public class Target : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (started)
+        if (game.GameGoing & transform.localScale.x < 2)
         {
-            if(transform.localScale.x < 2)
-            {
-                transform.localScale = Vector3.one * 0.33f * (Time.time - timeLoad + 0.5f);
-            }
-            if (Time.time - game.gameStartTime > 30)
-            {
-                game.endGame();
-                started = false;
-            }
-        }
-        if (Time.time - lastSec >= 1 && started)
-        {
-            lastSec = Time.time;
-            game.changeTimer();
+            transform.localScale = Vector3.one * 0.33f * (Time.time - timeLoad + 0.5f);
         }
     }
-    public void OnTriggerStay2D(Collider2D other)
+    private void OnMouseDown()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0)&& !started && transform.position.x == 0 && transform.position.y == 0)
+        if (!game.GameGoing && transform.position.Equals(new Vector3(0,0,-0.1f)))
         {
-            started = true;
             game.startGame();
             changePos();
-        }    
+        }
     }
-    public void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (started)
+        if (game.GameGoing)
         {
             changePos();
             game.addPoint();

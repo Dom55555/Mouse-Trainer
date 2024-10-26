@@ -16,11 +16,8 @@ public class Button : MonoBehaviour
     {
         
     }
-    public void OnTriggerStay2D(Collider2D other)
+    private void OnMouseDown()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            SceneManager.LoadScene("SampleScene");
-        }
+        SceneManager.LoadScene("SampleScene");
     }
 }

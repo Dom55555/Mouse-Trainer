@@ -10,10 +10,13 @@ public class GameManager : MonoBehaviour
     public TMP_Text startText;
     public TMP_Text points;
     public TMP_Text time;
-    public GameObject endScreen;
     public TMP_Text highscoreText;
-    public float gameStartTime;
+    public GameObject endScreen;
+    public GameObject crosshair;
     AudioSource endgameSound;
+    public bool GameGoing;
+    float gameStartTime;
+    float lastSec;
     int HighScore;
     // Start is called before the first frame update
     void Start()
@@ -26,15 +29,31 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (GameGoing)
+        {
+            if (Time.time - gameStartTime > 30 && GameGoing)
+            {
+                GameGoing = false;
+                endGame();
+            }
+            if (Time.time - lastSec >= 1 && GameGoing)
+            {
+                lastSec = Time.time;
+                changeTimer();
+            }
+        }
     }
     public void startGame()
     {
+        GameGoing = true;
         startText.gameObject.SetActive(false);
         time.text = "30";
+        lastSec = Time.time;
         gameStartTime = Time.time;
+        crosshair.SetActive(true);
+        Cursor.visible = false;
     }
-    public void endGame()
+    private void endGame()
     {
         time.text = "0";
         endgameSound.Play();
@@ -45,12 +64,14 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("highscore", HighScore);
         }
         highscoreText.text = HighScore.ToString();
+        crosshair.SetActive(false);
+        Cursor.visible = true;
     }
     public void addPoint()
     {
         points.text = (int.Parse(points.text) + 1).ToString();
     }
-    public void changeTimer()
+    private void changeTimer()
     {
         time.text = (int.Parse(time.text) - 1).ToString();
     }
